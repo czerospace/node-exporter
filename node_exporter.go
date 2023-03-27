@@ -218,12 +218,6 @@ func main() {
 		fmt.Fprintf(w, "OK")
 	})
 
-	server := &http.Server{}
-	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
-		level.Error(logger).Log("err", err)
-		os.Exit(1)
-	}
-
 	// 服务注册
 	cfg := api.DefaultConfig()
 	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
@@ -262,4 +256,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	server := &http.Server{}
+	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
+		level.Error(logger).Log("err", err)
+		os.Exit(1)
+	}
+
 }
