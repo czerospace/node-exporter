@@ -233,12 +233,8 @@ func main() {
 	fmt.Printf("global.ExporterIP is : %s\n", global.ExporterIP)
 	fmt.Printf("toolkitFlags.WebListenAddresses is : %v\n", toolkitFlags.WebListenAddresses)
 	fmt.Printf("toolkitFlags.WebListenAddresses is : %s\n", toolkitFlags.WebListenAddresses)
-	fmt.Printf("toolkitFlags.WebSystemdSocket is : %v\n", toolkitFlags.WebSystemdSocket)
-	fmt.Printf("toolkitFlags.WebSystemdSocket is : %s\n", toolkitFlags.WebSystemdSocket)
-	fmt.Printf("toolkitFlags.WebConfigFile is : %v\n", toolkitFlags.WebConfigFile)
-	fmt.Printf("toolkitFlags.WebConfigFile is : %s\n", toolkitFlags.WebConfigFile)
 	check := &api.AgentServiceCheck{
-		HTTP:                           fmt.Sprintf("%s:%d", global.ExporterIP, toolkitFlags),
+		HTTP:                           fmt.Sprintf("%s:%d", global.ExporterIP, toolkitFlags.WebListenAddresses),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",
@@ -249,7 +245,7 @@ func main() {
 	registration.Name = "node-exporter-with-consul"
 	// 将服务器 ip 作为 uuid 注册到 consul 中
 	registration.ID = global.ExporterIP
-	registration.Port, _ = strconv.Atoi(fmt.Sprintf("%d", toolkitFlags))
+	registration.Port, _ = strconv.Atoi(fmt.Sprintf("%d", toolkitFlags.WebListenAddresses))
 	registration.Tags = []string{"node-exporter", "icdn", "icdncacher"}
 	registration.Address = global.ExporterIP
 	registration.Check = check

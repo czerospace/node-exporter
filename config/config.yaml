@@ -1,5 +1,6 @@
 # consul 地址
-consulhost: "172.28.16.191"
-consulport: 8500
+consul:
+  host: "172.28.16.191"
+  port: 8500
 interfacename: "bond1"
 subnet: "172.27.2.0/24"

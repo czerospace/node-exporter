@@ -8,6 +8,6 @@ type ServerConfig struct {
 }
 
 type ConsulConfig struct {
-	Host string `mapstructure:"consulhost" json:"consulhost"`
-	Port int    `mapstructure:"consulport" json:"consulport"`
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
 }
