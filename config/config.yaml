@@ -2,5 +2,7 @@
 consul:
   host: "172.28.16.191"
   port: 8500
-interfacename: "bond1"
-subnet: "172.27.2.0/24"
+
+linux:
+  interface: "bond1"
+  subnet: "172.27.2.0/24"

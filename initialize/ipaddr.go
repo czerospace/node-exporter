@@ -7,7 +7,7 @@ import (
 )
 
 func InitGetIpaddr() {
-	iface, err := net.InterfaceByName(global.ServerConfig.InterfaceName)
+	iface, err := net.InterfaceByName(global.ServerConfig.NetInfo.Interface)
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +36,7 @@ func InitGetIpaddr() {
 
 func isBondSubnet(ip net.IP) bool {
 	// 请根据您的特定需求修改此处子网掩码
-	_, subnet, err := net.ParseCIDR(global.ServerConfig.Subnet)
+	_, subnet, err := net.ParseCIDR(global.ServerConfig.NetInfo.Subnet)
 	if err != nil {
 		panic(err)
 	}
