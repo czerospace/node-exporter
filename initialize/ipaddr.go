@@ -7,7 +7,7 @@ import (
 )
 
 func InitGetIpaddr() {
-	iface, err := net.InterfaceByName(global.ServerConfig.Interfacename)
+	iface, err := net.InterfaceByName(global.ServerConfig.InterfaceName)
 	if err != nil {
 		panic(err)
 	}

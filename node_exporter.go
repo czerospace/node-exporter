@@ -32,13 +32,12 @@ import (
 	_ "net/http/pprof"
 	"node-exporter-with-consul/collector"
 	"node-exporter-with-consul/global"
+	"node-exporter-with-consul/initialize"
 	"os"
 	"os/user"
 	"runtime"
 	"sort"
 	"strconv"
-
-	"node-exporter-with-consul/initialize"
 )
 
 // handler wraps an unfiltered http.Handler but uses a filtered handler,
@@ -219,10 +218,17 @@ func main() {
 		fmt.Fprintf(w, "OK")
 	})
 
+	server := &http.Server{}
+	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
+		level.Error(logger).Log("err", err)
+		os.Exit(1)
+	}
+
 	// 服务注册
 	cfg := api.DefaultConfig()
 	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
-	fmt.Printf("cfg.Address is : ", cfg.Address)
+	fmt.Printf("cfg.Address is : %v\n", cfg.Address)
+	fmt.Printf("cfg.Address is : %s\n", cfg.Address)
 
 	client, err := api.NewClient(cfg)
 	if err != nil {
@@ -256,11 +262,4 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	server := &http.Server{}
-	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
-		level.Error(logger).Log("err", err)
-		os.Exit(1)
-	}
-
 }
