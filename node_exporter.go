@@ -22,20 +22,24 @@ import (
 	"os/user"
 	"runtime"
 	"sort"
-
-	"github.com/prometheus/common/promlog"
-	"github.com/prometheus/common/promlog/flag"
+	"strconv"
 
 	"github.com/alecthomas/kingpin/v2"
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
+	"github.com/hashicorp/consul/api"
 	"github.com/prometheus/client_golang/prometheus"
 	promcollectors "github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/common/promlog"
+	"github.com/prometheus/common/promlog/flag"
 	"github.com/prometheus/common/version"
 	"github.com/prometheus/exporter-toolkit/web"
 	"github.com/prometheus/exporter-toolkit/web/kingpinflag"
-	"github.com/prometheus/node_exporter/collector"
+	"node-exporter-with-consul/collector"
+
+	"node-exporter-with-consul/global"
+	"node-exporter-with-consul/initialize"
 )
 
 // handler wraps an unfiltered http.Handler but uses a filtered handler,
@@ -143,6 +147,11 @@ func (h *handler) innerHandler(filters ...string) (http.Handler, error) {
 }
 
 func main() {
+	// 初始化配置文件
+	initialize.InitConfig()
+	// 获取当前所在服务器ip
+	initialize.InitGetIpaddr()
+
 	var (
 		metricsPath = kingpin.Flag(
 			"web.telemetry-path",
@@ -215,5 +224,38 @@ func main() {
 	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
 		level.Error(logger).Log("err", err)
 		os.Exit(1)
+	}
+
+	// 服务注册
+	cfg := api.DefaultConfig()
+	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
+
+	client, err := api.NewClient(cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	// 生成对应的检查对象
+	check := &api.AgentServiceCheck{
+		HTTP:                           fmt.Sprintf("%s:%d", global.ExporterIP, toolkitFlags),
+		Timeout:                        "5s",
+		Interval:                       "5s",
+		DeregisterCriticalServiceAfter: "15s",
+	}
+
+	// 生成注册对象
+	registration := new(api.AgentServiceRegistration)
+	registration.Name = "node-exporter-with-consul"
+	// 将服务器 ip 作为 uuid 注册到 consul 中
+	registration.ID = global.ExporterIP
+	registration.Port, _ = strconv.Atoi(fmt.Sprintf("%d", toolkitFlags))
+	registration.Tags = []string{"node-exporter", "homed", "icdn"}
+	registration.Address = global.ExporterIP
+	registration.Check = check
+
+	// 注册
+	err = client.Agent().ServiceRegister(registration)
+	if err != nil {
+		panic(err)
 	}
 }
