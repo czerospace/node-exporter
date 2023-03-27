@@ -18,16 +18,17 @@ func InitGetIpaddr() {
 	}
 
 	for _, addr := range addrs {
+		fmt.Printf("addr is ################## %s", addr)
 		switch v := addr.(type) {
 		case *net.IPNet:
 			if v.IP.To4() != nil && isBondSubnet(v.IP) {
 				global.ExporterIP = v.IP.String()
-				fmt.Println(global.ExporterIP)
+				fmt.Println("IPNET" + global.ExporterIP)
 			}
 		case *net.IPAddr:
 			if v.IP.To4() != nil && isBondSubnet(v.IP) {
 				global.ExporterIP = v.IP.String()
-				fmt.Println(global.ExporterIP)
+				fmt.Println("IPAddr" + global.ExporterIP)
 			}
 		}
 	}

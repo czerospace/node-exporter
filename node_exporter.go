@@ -15,15 +15,6 @@ package main
 
 import (
 	"fmt"
-	stdlog "log"
-	"net/http"
-	_ "net/http/pprof"
-	"os"
-	"os/user"
-	"runtime"
-	"sort"
-	"strconv"
-
 	"github.com/alecthomas/kingpin/v2"
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -36,9 +27,17 @@ import (
 	"github.com/prometheus/common/version"
 	"github.com/prometheus/exporter-toolkit/web"
 	"github.com/prometheus/exporter-toolkit/web/kingpinflag"
+	stdlog "log"
+	"net/http"
+	_ "net/http/pprof"
 	"node-exporter-with-consul/collector"
-
 	"node-exporter-with-consul/global"
+	"os"
+	"os/user"
+	"runtime"
+	"sort"
+	"strconv"
+
 	"node-exporter-with-consul/initialize"
 )
 
@@ -220,12 +219,6 @@ func main() {
 		fmt.Fprintf(w, "OK")
 	})
 
-	server := &http.Server{}
-	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
-		level.Error(logger).Log("err", err)
-		os.Exit(1)
-	}
-
 	// 服务注册
 	cfg := api.DefaultConfig()
 	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
@@ -260,4 +253,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	server := &http.Server{}
+	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
+		level.Error(logger).Log("err", err)
+		os.Exit(1)
+	}
+
 }
