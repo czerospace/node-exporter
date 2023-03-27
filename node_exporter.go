@@ -231,9 +231,12 @@ func main() {
 
 	// 生成对应的检查对象
 	fmt.Printf("global.ExporterIP is : %s\n", global.ExporterIP)
-	fmt.Printf("toolkitFlags is : %v\n", toolkitFlags.WebListenAddresses)
-	fmt.Printf("toolkitFlags is : %v\n", toolkitFlags.WebSystemdSocket)
-	fmt.Printf("toolkitFlags is : %v\n", toolkitFlags.WebConfigFile)
+	fmt.Printf("toolkitFlags.WebListenAddresses is : %v\n", toolkitFlags.WebListenAddresses)
+	fmt.Printf("toolkitFlags.WebListenAddresses is : %s\n", toolkitFlags.WebListenAddresses)
+	fmt.Printf("toolkitFlags.WebSystemdSocket is : %v\n", toolkitFlags.WebSystemdSocket)
+	fmt.Printf("toolkitFlags.WebSystemdSocket is : %s\n", toolkitFlags.WebSystemdSocket)
+	fmt.Printf("toolkitFlags.WebConfigFile is : %v\n", toolkitFlags.WebConfigFile)
+	fmt.Printf("toolkitFlags.WebConfigFile is : %s\n", toolkitFlags.WebConfigFile)
 	check := &api.AgentServiceCheck{
 		HTTP:                           fmt.Sprintf("%s:%d", global.ExporterIP, toolkitFlags),
 		Timeout:                        "5s",
