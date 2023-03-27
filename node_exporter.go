@@ -236,13 +236,15 @@ func main() {
 	}
 
 	// 生成对应的检查对象
+	fmt.Printf("toolkitFlags is : %s\n", global.ExporterIP)
+	fmt.Printf("toolkitFlags is : %d\n", toolkitFlags)
 	check := &api.AgentServiceCheck{
 		HTTP:                           fmt.Sprintf("%s:%d", global.ExporterIP, toolkitFlags),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",
 	}
-
+	fmt.Println(check)
 	// 生成注册对象
 	registration := new(api.AgentServiceRegistration)
 	registration.Name = "node-exporter-with-consul"

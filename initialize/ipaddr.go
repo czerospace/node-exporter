@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"fmt"
 	"net"
 	"node-exporter-with-consul/global"
 )
@@ -21,17 +22,20 @@ func InitGetIpaddr() {
 		case *net.IPNet:
 			if v.IP.To4() != nil && isBondSubnet(v.IP) {
 				global.ExporterIP = v.IP.String()
+				fmt.Println(global.ExporterIP)
 			}
 		case *net.IPAddr:
 			if v.IP.To4() != nil && isBondSubnet(v.IP) {
 				global.ExporterIP = v.IP.String()
+				fmt.Println(global.ExporterIP)
 			}
 		}
 	}
 }
 
 func isBondSubnet(ip net.IP) bool {
-	_, subnet, err := net.ParseCIDR(global.ServerConfig.Subnet) // 请根据您的特定需求修改此处子网掩码
+	// 请根据您的特定需求修改此处子网掩码
+	_, subnet, err := net.ParseCIDR(global.ServerConfig.Subnet)
 	if err != nil {
 		panic(err)
 	}
