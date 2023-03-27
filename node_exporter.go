@@ -247,7 +247,7 @@ func main() {
 	// 将服务器 ip 作为 uuid 注册到 consul 中
 	registration.ID = global.ExporterIP
 	registration.Port, _ = strconv.Atoi(fmt.Sprintf("%d", toolkitFlags))
-	registration.Tags = []string{"node-exporter", "homed", "icdn"}
+	registration.Tags = []string{"node-exporter", "icdn", "icdncacher"}
 	registration.Address = global.ExporterIP
 	registration.Check = check
 
