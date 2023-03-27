@@ -18,7 +18,7 @@ func InitGetIpaddr() {
 	}
 
 	for _, addr := range addrs {
-		fmt.Printf("addr is ################## %s", addr)
+		fmt.Printf("addr is ################## %s\n", addr)
 		switch v := addr.(type) {
 		case *net.IPNet:
 			if v.IP.To4() != nil && isBondSubnet(v.IP) {

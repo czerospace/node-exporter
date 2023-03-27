@@ -222,6 +222,7 @@ func main() {
 	// 服务注册
 	cfg := api.DefaultConfig()
 	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
+	fmt.Printf("cfg.Address is : ", cfg.Address)
 
 	client, err := api.NewClient(cfg)
 	if err != nil {
@@ -229,8 +230,10 @@ func main() {
 	}
 
 	// 生成对应的检查对象
-	fmt.Printf("toolkitFlags is : %s\n", global.ExporterIP)
-	fmt.Printf("toolkitFlags is : %d\n", toolkitFlags)
+	fmt.Printf("global.ExporterIP is : %s\n", global.ExporterIP)
+	fmt.Printf("toolkitFlags is : %v\n", toolkitFlags.WebListenAddresses)
+	fmt.Printf("toolkitFlags is : %v\n", toolkitFlags.WebSystemdSocket)
+	fmt.Printf("toolkitFlags is : %v\n", toolkitFlags.WebConfigFile)
 	check := &api.AgentServiceCheck{
 		HTTP:                           fmt.Sprintf("%s:%d", global.ExporterIP, toolkitFlags),
 		Timeout:                        "5s",
