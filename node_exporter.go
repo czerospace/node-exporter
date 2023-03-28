@@ -230,11 +230,17 @@ func main() {
 	}
 
 	// 生成对应的检查对象
-	fmt.Printf("global.ExporterIP is : %s\n", global.ExporterIP)
-	fmt.Printf("toolkitFlags.WebListenAddresses is : %v\n", toolkitFlags.WebListenAddresses)
-	fmt.Printf("toolkitFlags.WebListenAddresses is : %s\n", toolkitFlags.WebListenAddresses)
+	// 获取 node-exporter 的启动端口
+	portString := (*toolkitFlags.WebListenAddresses)[0][3:7]
+	port, err := strconv.Atoi(portString)
+	if err != nil {
+		// 处理错误情况
+		fmt.Println("无法将端口号转换为整数:", err)
+		return
+	}
+	fmt.Printf("global.ExporterIP is : %d\n", port)
 	check := &api.AgentServiceCheck{
-		HTTP:                           fmt.Sprintf("%s:%d", global.ExporterIP, toolkitFlags.WebListenAddresses),
+		HTTP:                           fmt.Sprintf("%s:%d", global.ExporterIP, port),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",
@@ -245,7 +251,7 @@ func main() {
 	registration.Name = "node-exporter-with-consul"
 	// 将服务器 ip 作为 uuid 注册到 consul 中
 	registration.ID = global.ExporterIP
-	registration.Port, _ = strconv.Atoi(fmt.Sprintf("%d", toolkitFlags.WebListenAddresses))
+	registration.Port = port
 	registration.Tags = []string{"node-exporter", "icdn", "icdncacher"}
 	registration.Address = global.ExporterIP
 	registration.Check = check
