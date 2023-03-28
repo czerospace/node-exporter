@@ -232,8 +232,8 @@ func main() {
 	// 生成对应的检查对象
 	// 获取 node-exporter 的启动端口
 	fmt.Println("++++++++++++++++++++===========================")
-	fmt.Println(*toolkitFlags.WebListenAddresses)
-	portString := (*toolkitFlags.WebListenAddresses)[0][3:7]
+	fmt.Printf("%T,%v", *toolkitFlags.WebListenAddresses, *toolkitFlags.WebListenAddresses)
+	portString := (*toolkitFlags.WebListenAddresses)[0][1:5]
 	fmt.Println(portString)
 	port, err := strconv.Atoi(portString)
 	if err != nil {
