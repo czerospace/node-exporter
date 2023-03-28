@@ -240,8 +240,8 @@ func main() {
 
 	fmt.Printf("addr is ################## %s\n", global.ExporterIP)
 	check := &api.AgentServiceCheck{
-		HTTP:     fmt.Sprintf("%s:%d/%s", global.ExporterIP, port, "health"),
-		Timeout:  "10s",
+		HTTP:     fmt.Sprintf("http://%s:%d/health", global.ExporterIP, port),
+		Timeout:  "5s",
 		Interval: "10s",
 	}
 	fmt.Println(check)
