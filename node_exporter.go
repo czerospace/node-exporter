@@ -15,6 +15,15 @@ package main
 
 import (
 	"fmt"
+	stdlog "log"
+	"net/http"
+	_ "net/http/pprof"
+	"os"
+	"os/user"
+	"runtime"
+	"sort"
+	"strconv"
+
 	"github.com/alecthomas/kingpin/v2"
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -27,17 +36,10 @@ import (
 	"github.com/prometheus/common/version"
 	"github.com/prometheus/exporter-toolkit/web"
 	"github.com/prometheus/exporter-toolkit/web/kingpinflag"
-	stdlog "log"
-	"net/http"
-	_ "net/http/pprof"
+
 	"node-exporter-with-consul/collector"
 	"node-exporter-with-consul/global"
 	"node-exporter-with-consul/initialize"
-	"os"
-	"os/user"
-	"runtime"
-	"sort"
-	"strconv"
 )
 
 // handler wraps an unfiltered http.Handler but uses a filtered handler,
@@ -219,47 +221,18 @@ func main() {
 		w.Write([]byte("OK"))
 	})
 
-	// 服务注册
-	cfg := api.DefaultConfig()
-	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
-
-	client, err := api.NewClient(cfg)
-	if err != nil {
-		panic(err)
-	}
-
-	// 生成对应的检查对象
 	// 获取 node-exporter 的启动端口
 	portString := (*toolkitFlags.WebListenAddresses)[0][1:5]
-	port, err := strconv.Atoi(portString)
+	global.LocalPort, err := strconv.Atoi(portString)
 	if err != nil {
 		// 处理错误情况
 		fmt.Println("无法将端口号转换为整数:", err)
 		return
 	}
+	// 向 consul 注册服务
+	initialize.InitRegister()
 
-	fmt.Printf("addr is ################## %s\n", global.ExporterIP)
-	check := &api.AgentServiceCheck{
-		HTTP:     fmt.Sprintf("http://%s:%d/health", global.ExporterIP, port),
-		Timeout:  "5s",
-		Interval: "10s",
-	}
-	fmt.Println(check)
-	// 生成注册对象
-	registration := new(api.AgentServiceRegistration)
-	registration.Name = "node-exporter-with-consul"
-	// 将服务器 ip 作为 uuid 注册到 consul 中
-	registration.ID = global.ExporterIP
-	registration.Port = port
-	registration.Tags = []string{"node-exporter", "icdn", "icdncacher"}
-	registration.Address = global.ExporterIP
-	registration.Check = check
 
-	// 注册
-	err = client.Agent().ServiceRegister(registration)
-	if err != nil {
-		panic(err)
-	}
 
 	server := &http.Server{}
 	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
