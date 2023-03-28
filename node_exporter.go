@@ -216,13 +216,12 @@ func main() {
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "OK")
+		fmt.Println(r)
 	})
 
 	// 服务注册
 	cfg := api.DefaultConfig()
 	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
-	fmt.Printf("cfg.Address is : %v\n", cfg.Address)
-	fmt.Printf("cfg.Address is : %s\n", cfg.Address)
 
 	client, err := api.NewClient(cfg)
 	if err != nil {
@@ -231,10 +230,7 @@ func main() {
 
 	// 生成对应的检查对象
 	// 获取 node-exporter 的启动端口
-	fmt.Println("++++++++++++++++++++===========================")
-	fmt.Printf("%T,%v\n", *toolkitFlags.WebListenAddresses, *toolkitFlags.WebListenAddresses)
 	portString := (*toolkitFlags.WebListenAddresses)[0][1:5]
-	fmt.Println(portString)
 	port, err := strconv.Atoi(portString)
 	if err != nil {
 		// 处理错误情况
@@ -243,7 +239,7 @@ func main() {
 	}
 	fmt.Printf("global.ExporterIP is : %d\n", port)
 	check := &api.AgentServiceCheck{
-		HTTP:                           fmt.Sprintf("%s:%d%s", global.ExporterIP, port, "/health"),
+		HTTP:                           fmt.Sprintf("%s:%d/%s", global.ExporterIP, port, "health"),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",
