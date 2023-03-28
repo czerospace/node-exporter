@@ -238,6 +238,7 @@ func main() {
 		return
 	}
 
+	fmt.Printf("addr is ################## %s\n", global.ExporterIP)
 	check := &api.AgentServiceCheck{
 		HTTP:     fmt.Sprintf("%s:%d/%s", global.ExporterIP, port, "health"),
 		Timeout:  "10s",
