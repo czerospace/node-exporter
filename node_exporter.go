@@ -221,7 +221,7 @@ func main() {
 	})
 
 	// 获取 node-exporter 的启动端口
-	portString := (*toolkitFlags.WebListenAddresses)[0][1:5]
+	portString := (*toolkitFlags.WebListenAddresses)[0][1:]
 	global.LocalPort, _ = strconv.Atoi(portString)
 
 	// 向 consul 注册服务
