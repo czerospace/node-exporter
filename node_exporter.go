@@ -27,7 +27,6 @@ import (
 	"github.com/alecthomas/kingpin/v2"
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
-	"github.com/hashicorp/consul/api"
 	"github.com/prometheus/client_golang/prometheus"
 	promcollectors "github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -223,16 +222,10 @@ func main() {
 
 	// 获取 node-exporter 的启动端口
 	portString := (*toolkitFlags.WebListenAddresses)[0][1:5]
-	global.LocalPort, err := strconv.Atoi(portString)
-	if err != nil {
-		// 处理错误情况
-		fmt.Println("无法将端口号转换为整数:", err)
-		return
-	}
+	global.LocalPort, _ = strconv.Atoi(portString)
+
 	// 向 consul 注册服务
 	initialize.InitRegister()
-
-
 
 	server := &http.Server{}
 	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
