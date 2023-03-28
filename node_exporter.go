@@ -213,10 +213,10 @@ func main() {
 		http.Handle("/", landingPage)
 	}
 
+	// 添加 http 健康检查接口
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "OK")
-		fmt.Println(r)
+		w.Write([]byte("OK"))
 	})
 
 	// 服务注册
@@ -237,12 +237,11 @@ func main() {
 		fmt.Println("无法将端口号转换为整数:", err)
 		return
 	}
-	fmt.Printf("global.ExporterIP is : %d\n", port)
+
 	check := &api.AgentServiceCheck{
-		HTTP:                           fmt.Sprintf("%s:%d/%s", global.ExporterIP, port, "health"),
-		Timeout:                        "5s",
-		Interval:                       "5s",
-		DeregisterCriticalServiceAfter: "15s",
+		HTTP:     fmt.Sprintf("%s:%d/%s", global.ExporterIP, port, "health"),
+		Timeout:  "10s",
+		Interval: "10s",
 	}
 	fmt.Println(check)
 	// 生成注册对象
