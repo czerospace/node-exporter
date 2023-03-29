@@ -6,3 +6,5 @@ consul:
 linux:
   interface: "bond1"
   subnet: "172.27.2.0/24"
+
+tags: ["node-exporter", "icdn", "icdn-jl","icdncacher"]

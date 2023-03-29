@@ -31,7 +31,8 @@ func InitRegister() {
 	// 将服务器 ip 作为 uuid 注册到 consul 中
 	registration.ID = global.ExporterIP
 	registration.Port = global.LocalPort
-	registration.Tags = []string{"node-exporter", "icdn", "icdncacher"}
+	fmt.Println("global.ServerConfig.Tags is : ", global.ServerConfig.Tags)
+	registration.Tags = global.ServerConfig.Tags
 	registration.Address = global.ExporterIP
 	registration.Check = check
 

@@ -4,6 +4,7 @@ package config
 type ServerConfig struct {
 	ConsulInfo ConsulConfig `mapstructure:"consul" json:"consul"`
 	NetInfo    NetConfig    `mapstructure:"linux" json:"linux"`
+	Tags       []string     `mapstructure:"tags" json:"tags"`
 }
 
 type ConsulConfig struct {
