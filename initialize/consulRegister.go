@@ -2,8 +2,10 @@ package initialize
 
 import (
 	"fmt"
-	"github.com/hashicorp/consul/api"
 	"net/http"
+	
+	"github.com/hashicorp/consul/api"
+
 	"node-exporter-with-consul/global"
 )
 
@@ -24,14 +26,14 @@ func InitRegister() {
 		Timeout:  "5s",
 		Interval: "10s",
 	}
-	fmt.Println(check)
+
 	// 生成注册对象
 	registration := new(api.AgentServiceRegistration)
 	registration.Name = "node-exporter-with-consul"
 	// 将服务器 ip 作为 uuid 注册到 consul 中
 	registration.ID = global.ExporterIP
 	registration.Port = global.LocalPort
-	fmt.Println("global.ServerConfig.Tags is : ", global.ServerConfig.Tags)
+
 	registration.Tags = global.ServerConfig.Tags
 	registration.Address = global.ExporterIP
 	registration.Check = check
